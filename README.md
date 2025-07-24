@@ -73,7 +73,8 @@ http://localhost:9090/swagger-ui/index.html
 
 ## 🎬 Final Output Demo
 
-📽️ [Click here to watch the demo video](./demo.mp4)
+📽️ [https://youtu.be/n_MdwfJN63o](./demo.mp4)
+
 
 
  
