@@ -1,32 +1,61 @@
 package com.myproject.quoteapi.serviceimpl;
 
-import com.myproject.quoteapi.service.QuoteService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+import com.myproject.quoteapi.service.QuoteService;
 
 @Service
 public class QuoteServiceImpl implements QuoteService {
 
-    private final List<String> quotes = List.of(
-            "Believe in yourself!",
-            "Never give up.",
-            "Stay focused and keep going.",
-            "Never stop learning.",
-            "Success is a journey, not a destination.",
-            "Push yourself, because no one else is going to do it for you.",
-            "Success doesn’t come to you, you go to it.",
-            "Small steps every day lead to big results.",
-            "Don’t watch the clock; do what it does. Keep going.",
-            "Great things never come from comfort zones.",
-            "Work hard in silence, let your success be your noise.",
-            "Dream it. Wish it. Do it."
-    );
+    private final List<String> quotes = new CopyOnWriteArrayList<>(List.of(
+        "Believe in yourself!",
+        "Never give up.",
+        "Stay focused and keep going.",
+        "Never stop learning.",
+        "Success is a journey, not a destination."
+    ));
 
     @Override
     public String getRandomQuote() {
         int randomIndex = ThreadLocalRandom.current().nextInt(quotes.size());
         return quotes.get(randomIndex);
+    }
+
+    @Override
+    public void addQuote(String quote) {
+        String cleaned = quote.replaceAll("[\\r\\n]+", " ").trim();
+        quotes.add(cleaned);
+    }
+
+
+    @Override
+    public boolean deleteQuote(String quote) {
+        String normalizedInput = quote.trim().toLowerCase();
+
+        Optional<String> match = quotes.stream()
+            .filter(q -> q.trim().toLowerCase().equals(normalizedInput))
+            .findFirst();
+
+        match.ifPresent(quotes::remove);
+        return match.isPresent();
+    }
+    @Override
+    public List<String> getAllQuotes() {
+        return new ArrayList<>(quotes);
+    }
+    @Override
+    public List<String> getMultipleQuotes(int count) {
+        return ThreadLocalRandom.current()
+            .ints(0, quotes.size())
+            .distinct()
+            .limit(count)
+            .mapToObj(quotes::get)
+            .toList();
     }
 }
